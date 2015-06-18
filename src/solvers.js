@@ -44,11 +44,13 @@ window.countNRooksSolutions = function(size) {
   var recurse = function(board, row, count){
     for (var column = 0; column < size; column++){
       board.togglePiece(row,column);
-      if (!board.hasAnyRooksConflicts()){
+      if (!board.hasColConflictAt(column)){
+      //if(!board.hasAnyRooksConflicts()){ //change brought execution time for 1-8 from 37326ms to 4420
         if (row === size-1){
           solutionCount++;
         } else {
-          recurse(new Board(board.rows()),row+1,count);
+          //recurse(new Board(board.rows()),row+1,count); //change brought execution time for 1-8 from 4420ms to 1991 ms
+          recurse(board,row+1,count);
         }
       }
       board.togglePiece(row, column);
@@ -71,7 +73,8 @@ window.findNQueensSolution = function(size) {
   var recurse = function(board, row){
     for (var column = 0; column < size; column++){
       board.togglePiece(row,column);
-      if (!board.hasAnyQueensConflicts()){
+      //if (!board.hasAnyQueensConflicts()){  //change brought time for 1-8 from 2726ms to 297ms
+      if (!board.hasColConflictAt(column) && !board.hasMajorDiagonalConflictAt(column - row) && !board.hasMinorDiagonalConflictAt(column + row)){
         if (row === size-1){
           return board;
         } else {
@@ -102,14 +105,16 @@ window.countNQueensSolutions = function(size) {
     return 1;
   }
 
-  var recurse = function(board, row, count){
+  var recurse = function(board, row){
     for (var column = 0; column < size; column++){
       board.togglePiece(row,column);
-      if (!board.hasAnyQueensConflicts()){
+      //if (!board.hasAnyQueensConflicts()){  // 2726ms -> 297ms
+      if (!board.hasColConflictAt(column) && !board.hasMajorDiagonalConflictAt(column - row) && !board.hasMinorDiagonalConflictAt(column + row)){
         if (row === size-1){
           solutionCount++;
         } else {
-          recurse(new Board(board.rows()),row+1,count);
+          //recurse(new Board(board.rows()),row+1,count); // 297ms -> 203ms
+          recurse(board,row+1);
         }
       }
       board.togglePiece(row, column);
